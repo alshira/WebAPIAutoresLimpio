@@ -50,6 +50,7 @@ namespace WebAPIAutores
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
+            //configurarmos Automaper.Extensions.Microsoft.DependencyInjection 
             services.AddAutoMapper(typeof(Startup));
 
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,122 +15,51 @@ namespace WebAPIAutores.Controllers
     public class AutoresController : ControllerBase
     {
         private readonly ApplicationDbContext context;
-        /*limpiando código
-         * private readonly iServicio servicio;
-        private readonly ServicioTransient servicioTransient;
-        private readonly ServicioScoped servicioScoped;
-        private readonly ServicioSingleton servicioSingleton;
-        private readonly ILogger<AutoresController> logger;*/
+        private readonly IMapper mapper;
 
-        //estamos ocupando inyección de dependencias, esto es, como en Startup.cs definimos 
-        //el servicio de dbcontex, podemos desde el contructor de cualquier clase invocar dicha definición
-        // es como varaibles globales asignadas a través de las clases.
-        /*limpiando código
-         * public AutoresController(ApplicationDbContext context,iServicio servicio,
-            ServicioTransient servicioTransient, ServicioScoped servicioScoped,
-            ServicioSingleton servicioSingleton, ILogger<AutoresController> logger)*/
-        public AutoresController(ApplicationDbContext context)
+        public AutoresController(ApplicationDbContext context, IMapper mapper)
         {
             this.context = context;
-            /*limpiando código
-             * this.servicio = servicio;
-            this.servicioTransient = servicioTransient;
-            this.servicioScoped = servicioScoped;
-            this.servicioSingleton = servicioSingleton;
-            this.logger = logger;*/
+            this.mapper = mapper;
+         
         }
         [HttpGet]
-        /*Limpiando código
-         * [HttpGet("listado")]// api/autores/listado
-        [HttpGet("/listado")]// /listado
-        
-        [ResponseCache(Duration = 10)] //aplicando el filtro de cache 10s
-        [ServiceFilter(typeof(MiFiltroDeAccion))] // agregando filtro personalizado
-        */
-        //[Authorize] //authorize implementado a nivel de metodo
-        //modo fijo o convencional
-        //public ActionResult<List<Autor>> Get()
-        //usando asyc
-        public async Task<ActionResult<List<Autor>>> Get()
-        {
-            //agregamos por código una excepción para que exista un error y se vaya al filtro grlobal personalizado que creamos
-            //throw new NotImplementedException();
-
-            /* limpiando código
-             * logger.LogInformation("Estamos obteniendo listado de autores");
-            logger.LogWarning("Este es un msg de warning");
-            servicio.RealizarTarea();*/
-
-            /* Esto era fijo
-             * return new List<Autor>() { 
-                 new Autor() { Id=1, nombre="Augusto"},
-                 new Autor() { Id=2, nombre="Claudia"}
-             };*/
-            //traiamos unicamente los datos del autor
-            return await context.Autores.ToListAsync();
-            //tramos ahora los datos de los libros tambíen
-            //return await context.Autores.Include(x=>x.Libros).ToListAsync();
-        }
-
-        /* limpiando código
-        [HttpGet("primero")]//api/[controller]/primero
-        public async Task<ActionResult<Autor>> PrimerAutor()
+       
+        public async Task<List<AutorDTO>> Get()
         {
             
-            return await context.Autores.FirstOrDefaultAsync();
-        }*/
-
-
+          var autores = await context.Autores.ToListAsync();
+          return mapper.Map<List<AutorDTO>>(autores);
+        }
+        
         //usando variables como rutas de acceso
         //usando dos parametros y uno nulo
         [HttpGet("{id:int}")]//api/[controller]/1   //atributo a nivel de método
-        public async Task<ActionResult<Autor>> Get([FromRoute] int id) //attributo a nivel de prametros
+        public async Task<ActionResult<AutorDTO>> Get(int id) //attributo a nivel de prametros
         {
         
-            var autor = await context.Autores.FirstOrDefaultAsync(x => x.Id == id);
+            var autor = await context.Autores.FirstOrDefaultAsync(autorDB => autorDB.Id == id);
             
             if (autor == null)
             {
                 return NotFound();
             } else
             {
-                return Ok(autor);
+                return mapper.Map<AutorDTO>(autor);
             }
             
         }
+
         //usando variables como rutas de acceso
         [HttpGet("{nombre}")]//api/[controller]/augusto
-        public async Task<ActionResult<Autor>> Get(string Nombre)
+        public async Task<ActionResult<List<AutorDTO>>> Get([FromRoute] string nombre)
         {
-            var autor = await context.Autores.FirstOrDefaultAsync(x => x.Nombre == Nombre);
-            if (autor == null)
-            {
-                return NotFound();
-            }
-            else
-            {
-                return Ok(autor);
-            }
+            var autores = await context.Autores.Where(autorDB => autorDB.Nombre.Contains(nombre)).ToListAsync();
+            
+            return mapper.Map<List<AutorDTO>>(autores);
         }
-        /* limpiando código
-        [HttpGet("GUID")]
-        [ResponseCache(Duration =10)] //aplicando el filtro de cache 10s
-        [ServiceFilter(typeof(MiFiltroDeAccion))] // agregando filtro personalizado
-        public ActionResult ObtenerGuids()
-        {
-            return Ok(new
-            {
-                AutoresController_Transient = servicioTransient.Guid,
-                ServicioA_Transient = servicio.ObtenerTransient(),
-                AutoresController_Scoped = servicioScoped.Guid,
-                ServicioA_Scoped = servicio.ObtenerScoped(),
-                AutoresController_Singleton = servicioSingleton.Guid,                             
-                ServicioA_Singleton = servicio.ObtenerSingleton(),
-            }) ;
-        }
-        */
-
-            [HttpPost]//attributo a nivel del metodo
+       
+        [HttpPost]//attributo a nivel del metodo
         public async Task<ActionResult> Post([FromForm] AutorCreacionDTO autorCreacionDTO) //attributo a nivel de parametros
         {
 
@@ -141,10 +71,13 @@ namespace WebAPIAutores.Controllers
             }
 
             //este es mapeo manual
-            var autor = new Autor()
+            /*var autor = new Autor()
             {
                 Nombre = autorCreacionDTO.Nombre
-            };
+            };*/
+
+            //mapeo usando automaper
+            var autor = mapper.Map<Autor>(autorCreacionDTO);
 
             context.Add(autor);//estamos agregando algo que todavía no existe
             await context.SaveChangesAsync();//por eso le decimos que espere a que exista para agregarlo
