@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using WebAPIAutores.Filtros;
 using WebAPIAutores.Middlewares;
-using WebAPIAutores.Servicios;
+//using WebAPIAutores.Servicios;
 
 namespace WebAPIAutores
 {
@@ -34,7 +34,7 @@ namespace WebAPIAutores
            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles); // está línea te ayuda a ignorar las inclusiones ciclicas de los modelos
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
-
+/*limpieza de código
             services.AddTransient<iServicio, ServicioA>();//transitorio, no podemos consumir un servicio scope desde un singleton por eso debe ser "AddTransient"
 
             services.AddTransient<ServicioTransient>();//transitorio siempre es distinta aunque sea en el mismo contexto
@@ -46,7 +46,7 @@ namespace WebAPIAutores
 
             //agregamos nuestro servicio IHostedService
             services.AddHostedService<EscribirEnArchivo>();
-
+*/
             //agregando filtro de cache
             services.AddResponseCaching();
 
@@ -60,7 +60,8 @@ namespace WebAPIAutores
         }
 
         //agregando los middlewares
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        //public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             //aquí se listan los middlewares
             //se ejecutan de arruba a abajo y las respuestas se regresan de apajo hacia arriba.
@@ -100,7 +101,7 @@ namespace WebAPIAutores
             //usamos el middleware desde una clase forma 2 sin exponer la calse a usar como lo hace  app.UseSwagger();
             app.UseLoguearRespuestaHTTP();
 
-
+            /* limpieza de código
             //por medio de run creamos un middle ware que detiene la ejecución de todos
             //con el uso de map hacemos una bifurcación de nuestra tubería de procesos
             //esta rama se llama "ruta1"
@@ -111,7 +112,7 @@ namespace WebAPIAutores
                     await contexto.Response.WriteAsync("Estoy inteceptando la tubería"); //esto evita la ejecución de los subsecuentes middlewares
                 });
             });
-
+            */
 
             // configure the http request pipeline.
             //le cambiamos el CASING a todas las funciones OJO

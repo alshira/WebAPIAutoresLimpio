@@ -7,14 +7,18 @@ namespace WebAPIAutores.Models
     //vamos a ver unn tipo de validación que mezcle varias validaciones para lo cual vamos a 
     //convertir la clase a heredar IValidatableObject
     //public class Libro
-    public class Libro : IValidatableObject
+    /* limpieza de código
+     * public class Libro : IValidatableObject
+     */
+    public class Libro 
 
 
     {
         public int Id { get; set; }
         [PrimeraLetraMayuscula]//custom dataanotation
         public string Titulo { get; set; }
-        public int AutorId { get; set; }
+        /* limpieza de codigo
+         * public int AutorId { get; set; }
         [NotMapped]//esto es para que no se hagan las migraciones y no afecte la bd
         public int Menor { get; set; }
         [NotMapped]//esto es para que no se hagan las migraciones y no afecte la bd
@@ -39,5 +43,6 @@ namespace WebAPIAutores.Models
             }
             //throw new NotImplementedException();
         }
+        */
     }
 }

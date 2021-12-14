@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPIAutores.Filtros;
 using WebAPIAutores.Models;
-using WebAPIAutores.Servicios;
+//using WebAPIAutores.Servicios;
 
 namespace WebAPIAutores.Controllers
 {
@@ -65,9 +65,9 @@ namespace WebAPIAutores.Controllers
                  new Autor() { Id=2, nombre="Claudia"}
              };*/
             //traiamos unicamente los datos del autor
-            //return await context.Autores.ToListAsync();
+            return await context.Autores.ToListAsync();
             //tramos ahora los datos de los libros tambíen
-            return await context.Autores.Include(x=>x.Libros).ToListAsync();
+            //return await context.Autores.Include(x=>x.Libros).ToListAsync();
         }
 
         /* limpiando código

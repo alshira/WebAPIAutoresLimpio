@@ -22,12 +22,12 @@ namespace WebAPIAutores.Controllers
         public async Task<ActionResult<Libro>> Get(int id)
         {
             //solo traiamos los datos del libro
-            //return await context.Libros.FirstOrDefaultAsync(x => x.Id == id);
+            return await context.Libros.FirstOrDefaultAsync(x => x.Id == id);
             //ahora traemos los datos del autor también
-            return await context.Libros.Include(x=>x.Autor).FirstOrDefaultAsync(x => x.Id == id);
+            //return await context.Libros.Include(x=>x.Autor).FirstOrDefaultAsync(x => x.Id == id);
         }
 
-       
+      /* 
         // POST api/<LibrosController>
         [HttpPost]
         public async Task<ActionResult> Post(Libro libro)
@@ -43,7 +43,7 @@ namespace WebAPIAutores.Controllers
 
         }
 
-
+        */
      
     }
 }
