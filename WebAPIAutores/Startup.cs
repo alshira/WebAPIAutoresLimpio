@@ -50,6 +50,11 @@ namespace WebAPIAutores
             //agregando filtro de cache
             services.AddResponseCaching();
 
+            //aplicando el servicio para configurar connectionstring manualmente
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("defaultConnection"))
+            );
+
             //agregando filtro de autnenticación
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
@@ -129,6 +134,8 @@ namespace WebAPIAutores
 
             //aplicando filtro de cache
             app.UseResponseCaching();
+
+           
 
             //despues de agregar services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
             //verificamos que este UseAuthorization

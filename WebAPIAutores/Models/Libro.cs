@@ -16,6 +16,7 @@ namespace WebAPIAutores.Models
     {
         public int Id { get; set; }
         [PrimeraLetraMayuscula]//custom dataanotation
+        [StringLength(maximumLength:250)]
         public string Titulo { get; set; }
         /* limpieza de codigo
          * public int AutorId { get; set; }
