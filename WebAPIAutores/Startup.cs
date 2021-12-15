@@ -34,19 +34,7 @@ namespace WebAPIAutores
            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles); // está línea te ayuda a ignorar las inclusiones ciclicas de los modelos
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
-/*limpieza de código
-            services.AddTransient<iServicio, ServicioA>();//transitorio, no podemos consumir un servicio scope desde un singleton por eso debe ser "AddTransient"
 
-            services.AddTransient<ServicioTransient>();//transitorio siempre es distinta aunque sea en el mismo contexto
-            services.AddScoped<ServicioScoped>();//scoped mismo por la sesión
-            services.AddSingleton<ServicioSingleton>();//Singleton mismo a través de las instancias, siempre siempre
-
-            //agregamos el filtro personalizado
-            services.AddTransient<MiFiltroDeAccion>(); // lo agregamos transitorio, siempre distinta aunque sea en el mismo contexto
-
-            //agregamos nuestro servicio IHostedService
-            services.AddHostedService<EscribirEnArchivo>();
-*/
             //agregando filtro de cache
             services.AddResponseCaching();
 
@@ -61,6 +49,8 @@ namespace WebAPIAutores
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
+            services.AddAutoMapper(typeof(Startup));
 
         }
 

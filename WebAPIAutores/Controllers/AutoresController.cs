@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebAPIAutores.DTOs;
 using WebAPIAutores.Filtros;
 using WebAPIAutores.Models;
 //using WebAPIAutores.Servicios;
@@ -98,9 +99,9 @@ namespace WebAPIAutores.Controllers
         }
         //usando variables como rutas de acceso
         [HttpGet("{nombre}")]//api/[controller]/augusto
-        public async Task<ActionResult<Autor>> Get(string nombre)
+        public async Task<ActionResult<Autor>> Get(string Nombre)
         {
-            var autor = await context.Autores.FirstOrDefaultAsync(x => x.nombre == nombre);
+            var autor = await context.Autores.FirstOrDefaultAsync(x => x.Nombre == Nombre);
             if (autor == null)
             {
                 return NotFound();
@@ -129,15 +130,21 @@ namespace WebAPIAutores.Controllers
         */
 
             [HttpPost]//attributo a nivel del metodo
-        public async Task<ActionResult> Post([FromForm]Autor autor) //attributo a nivel de parametros
+        public async Task<ActionResult> Post([FromForm] AutorCreacionDTO autorCreacionDTO) //attributo a nivel de parametros
         {
 
             //validación a nivel de controller
-            var existeAutor = await context.Autores.AnyAsync(x => x.nombre == autor.nombre);
+            var existeAutor = await context.Autores.AnyAsync(x => x.Nombre == autorCreacionDTO.Nombre);
             if (existeAutor)
             {
-                return BadRequest($"Ya existe un autor con el nombre {autor.nombre}");
+                return BadRequest($"Ya existe un autor con el nombre {autorCreacionDTO.Nombre}");
             }
+
+            //este es mapeo manual
+            var autor = new Autor()
+            {
+                Nombre = autorCreacionDTO.Nombre
+            };
 
             context.Add(autor);//estamos agregando algo que todavía no existe
             await context.SaveChangesAsync();//por eso le decimos que espere a que exista para agregarlo
