@@ -51,7 +51,8 @@ namespace WebAPIAutores.Controllers
         }
 
         //usando variables como rutas de acceso
-        [HttpGet("{nombre}")]//api/[controller]/augusto
+        //[HttpGet("{nombre}")] //api/[controller]/augusto
+        [HttpGet("{nombre}")]
         public async Task<ActionResult<List<AutorDTO>>> Get([FromRoute] string nombre)
         {
             var autores = await context.Autores.Where(autorDB => autorDB.Nombre.Contains(nombre)).ToListAsync();
@@ -64,7 +65,7 @@ namespace WebAPIAutores.Controllers
         {
 
             //validación a nivel de controller
-            var existeAutor = await context.Autores.AnyAsync(x => x.Nombre == autorCreacionDTO.Nombre);
+            var existeAutor = await context.Autores.AnyAsync(autorDB => autorDB.Nombre == autorCreacionDTO.Nombre);
             if (existeAutor)
             {
                 return BadRequest($"Ya existe un autor con el nombre {autorCreacionDTO.Nombre}");
@@ -91,7 +92,7 @@ namespace WebAPIAutores.Controllers
             {
                 return BadRequest("el id del autor no coincide con el id de la URL");
             }
-            var existe = await context.Autores.AnyAsync(x => x.Id == id);
+            var existe = await context.Autores.AnyAsync(autorDB => autorDB.Id == id);
             if (!existe)
             {
                 return NotFound();
@@ -104,7 +105,7 @@ namespace WebAPIAutores.Controllers
         [HttpDelete("{id:int}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existe = await context.Autores.AnyAsync(context => context.Id == id);
+            var existe = await context.Autores.AnyAsync(autorDB => autorDB.Id == id);
             if (!existe)
             {
                 return NotFound();
