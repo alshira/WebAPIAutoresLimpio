@@ -4,19 +4,23 @@ using WebAPIAutores.Validaciones;
 
 namespace WebAPIAutores.Models
 {
-    
-    public class Libro 
+
+    public class Libro
 
 
     {
         public int Id { get; set; }
         [Required]
         [PrimeraLetraMayuscula]//custom dataanotation
-        [StringLength(maximumLength:250)]
+        [StringLength(maximumLength: 250)]
         public string Titulo { get; set; }
         //propiedad de navegación
         // nos va permitir traer la lista de comentarios de un libro en espcífico
         public List<Comentario> Comentarios { get; set; }
+        //propiedad de navegación para relación muchos a muchos del modelo AutoresLibros
+        public List<AutorLibro> AutoresLibros { get; set; }//relacion muchos a muchos
+
+
         /* limpieza de codigo
          * public int AutorId { get; set; }
         [NotMapped]//esto es para que no se hagan las migraciones y no afecte la bd

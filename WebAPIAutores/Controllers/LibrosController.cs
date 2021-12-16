@@ -26,7 +26,7 @@ namespace WebAPIAutores.Controllers
         public async Task<ActionResult<LibroDTO>> Get(int id)
         {
             //solo traiamos los datos del libro
-            var libro = await context.Libros.FirstOrDefaultAsync(x => x.Id == id);
+            var libro = await context.Libros.Include(libroDB => libroDB.Comentarios).FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
             return mapper.Map<LibroDTO>(libro);
 
             //ahora traemos los datos del autor también

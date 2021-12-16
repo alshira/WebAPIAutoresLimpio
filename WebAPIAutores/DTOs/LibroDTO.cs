@@ -6,5 +6,7 @@ namespace WebAPIAutores.DTOs
     {
         public string Id { get; set; }
         public string Titulo { get; set; }
+
+        public List<ComentarioDTO> Comentarios { get; set; }
     }
 }
