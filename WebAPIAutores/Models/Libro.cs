@@ -4,20 +4,19 @@ using WebAPIAutores.Validaciones;
 
 namespace WebAPIAutores.Models
 {
-    //vamos a ver unn tipo de validación que mezcle varias validaciones para lo cual vamos a 
-    //convertir la clase a heredar IValidatableObject
-    //public class Libro
-    /* limpieza de código
-     * public class Libro : IValidatableObject
-     */
+    
     public class Libro 
 
 
     {
         public int Id { get; set; }
+        [Required]
         [PrimeraLetraMayuscula]//custom dataanotation
         [StringLength(maximumLength:250)]
         public string Titulo { get; set; }
+        //propiedad de navegación
+        // nos va permitir traer la lista de comentarios de un libro en espcífico
+        public List<Comentario> Comentarios { get; set; }
         /* limpieza de codigo
          * public int AutorId { get; set; }
         [NotMapped]//esto es para que no se hagan las migraciones y no afecte la bd
