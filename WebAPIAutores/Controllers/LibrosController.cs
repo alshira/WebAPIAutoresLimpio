@@ -27,11 +27,19 @@ namespace WebAPIAutores.Controllers
         {
             //solo traiamos los datos del libro
             //var libro = await context.Libros.Include(libroDB => libroDB.Comentarios).FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
-            var libro = await context.Libros
+            
+            /*Include y then inclulde
+             * var libro = await context.Libros
                 .Include(libroDB => libroDB.AutoresLibros) //el include del resistro en autores libros
                 .ThenInclude(autorLibroDB=> autorLibroDB.Autor) // hacemos un include anidado e incluimos el autor
                 .FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
-                libro.AutoresLibros = libro.AutoresLibros.OrderBy(x=> x.Orden).ToList();
+                libro.AutoresLibros = libro.AutoresLibros.OrderBy(x=> x.Orden).ToList();*/
+            var libro = await context.Libros
+               .Include(libroDB => libroDB.Comentarios) // el include para los comentarios
+               .Include(libroDB => libroDB.AutoresLibros) //el include del resistro en autores libros
+               .ThenInclude(autorLibroDB => autorLibroDB.Autor) // hacemos un include anidado e incluimos el autor
+               .FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
+            libro.AutoresLibros = libro.AutoresLibros.OrderBy(x => x.Orden).ToList();
 
             return mapper.Map<LibroDTO>(libro);
 
