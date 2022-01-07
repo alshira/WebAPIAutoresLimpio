@@ -34,7 +34,8 @@ namespace WebAPIAutores.Controllers
         
         //usando variables como rutas de acceso
         //usando dos parametros y uno nulo
-        [HttpGet("{id:int}")]//api/[controller]/1   //atributo a nivel de método
+        //[HttpGet("{id:int}")]//api/[controller]/1   //atributo a nivel de método
+        [HttpGet("{id:int}", Name ="obtenerAutor")]//Ponemos nombre a la ruta
         //public async Task<ActionResult<AutorDTO>> Get(int id) //attributo a nivel de prametros
         //public async Task<ActionResult<AutorDTO>> Get(int id) //sin herencia
         public async Task<ActionResult<AutorDTOconLibros>> Get(int id) //con herencia
@@ -87,7 +88,10 @@ namespace WebAPIAutores.Controllers
 
             context.Add(autor);//estamos agregando algo que todavía no existe
             await context.SaveChangesAsync();//por eso le decimos que espere a que exista para agregarlo
-            return Ok();//por ahora reportamos OK aunque en el futuro revisaremos la respuesta real
+
+            var autorDTO = mapper.Map<AutorDTO>(autor); // creamos esto porque no es correcto darle a CreatedATRoute el objeto autor, así no exponemos nuestro aobjeto autor al mundo externo.
+            //return Ok();//por ahora reportamos OK aunque en el futuro revisaremos la respuesta real
+            return CreatedAtRoute("obtenerAutor",new {id= autor.Id },autorDTO); // new {} esto es un objeto anónimo
         }
 
         [HttpPut("{id:int}")]//"api/[controller]/id"

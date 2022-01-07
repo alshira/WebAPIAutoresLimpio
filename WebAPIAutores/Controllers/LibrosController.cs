@@ -22,7 +22,8 @@ namespace WebAPIAutores.Controllers
         }
 
         // GET: api/<LibrosController>/5
-        [HttpGet("{id:int}")]
+        //[HttpGet("{id:int}")]
+        [HttpGet("{id:int}", Name ="ObtenerLibro")] // le agregamos un nombre a la ruta
         //public async Task<ActionResult<LibroDTO>> Get(int id)// sin herencia
         public async Task<ActionResult<LibroDTOconAutores>> Get(int id) // con herencia
         {
@@ -49,6 +50,7 @@ namespace WebAPIAutores.Controllers
         }
 
        
+
         // POST api/<LibrosController>
         [HttpPost]
         public async Task<ActionResult> Post(LibroCreacionDTO libroCreacionDTO)
@@ -79,7 +81,10 @@ namespace WebAPIAutores.Controllers
 
             context.Add(libro);//marcamos para agregar
             await context.SaveChangesAsync();//guardamos los cambios
-            return Ok();
+
+            var libroDTO = mapper.Map<LibroDTO>(libro);
+            //return Ok();
+            return CreatedAtRoute("ObtenerLibro", new {id=libro.Id }, libroDTO); // new {} esto es un objeto anónimo
 
         }
 
