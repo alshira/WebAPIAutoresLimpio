@@ -26,7 +26,13 @@ namespace WebAPIAutores.Controllers
         public async Task<ActionResult<LibroDTO>> Get(int id)
         {
             //solo traiamos los datos del libro
-            var libro = await context.Libros.Include(libroDB => libroDB.Comentarios).FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
+            //var libro = await context.Libros.Include(libroDB => libroDB.Comentarios).FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
+            var libro = await context.Libros
+                .Include(libroDB => libroDB.AutoresLibros) //el include del resistro en autores libros
+                .ThenInclude(autorLibroDB=> autorLibroDB.Autor) // hacemos un include anidado e incluimos el autor
+                .FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
+                libro.AutoresLibros = libro.AutoresLibros.OrderBy(x=> x.Orden).ToList();
+
             return mapper.Map<LibroDTO>(libro);
 
             //ahora traemos los datos del autor también
@@ -38,12 +44,30 @@ namespace WebAPIAutores.Controllers
         [HttpPost]
         public async Task<ActionResult> Post(LibroCreacionDTO libroCreacionDTO)
         {
-            /*var existeAutor = await context.Autores.AnyAsync(x => x.Id == libro.AutorId); //consultamos si el autor que nos dieron existe
-            if (!existeAutor)
+            if (libroCreacionDTO.AutoresIds == null)
             {
-                return BadRequest($"El autor que proporcionaste no existe:{libro.AutorId}");
-            }*/
+                return BadRequest("No se puede crear un libro sin autores");
+            }
+            
+            //aquí hacemos un query en el cual traemos los autores y seleccionamos únicamente el ID de ellos
+            var autoresIds = await context.Autores.Where(autorDB => libroCreacionDTO.AutoresIds.Contains(autorDB.Id)).Select(x=> x.Id).ToListAsync();  
+
+            if (libroCreacionDTO.AutoresIds.Count != autoresIds.Count)
+            {
+                return BadRequest($"No existe uno de los autores enviados: {libroCreacionDTO.AutoresIds.Count}<>{autoresIds.Count}");
+            }
+           
             var libro = mapper.Map<Libro>(libroCreacionDTO);
+
+            if (libro.AutoresLibros != null)
+            {
+                for (int i = 0; i < libro.AutoresLibros.Count; i++)
+                {
+                    libro.AutoresLibros[i].Orden = i;
+                }
+
+            }
+
             context.Add(libro);//marcamos para agregar
             await context.SaveChangesAsync();//guardamos los cambios
             return Ok();
