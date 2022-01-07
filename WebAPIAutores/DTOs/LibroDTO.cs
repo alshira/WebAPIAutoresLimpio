@@ -4,11 +4,12 @@ namespace WebAPIAutores.DTOs
 {
     public class LibroDTO
     {
-        public string Id { get; set; }
+        public int Id { get; set; }
         public string Titulo { get; set; }
 
-        //public List<ComentarioDTO> Comentarios { get; set; }
+        public List<ComentarioDTO> Comentarios { get; set; }
 
-        public List<AutorDTO> Autores { get; set; }
+        //usamos herencia LibroDTOconAutores
+        //public List<AutorDTO> Autores { get; set; }
     }
 }

@@ -23,7 +23,8 @@ namespace WebAPIAutores.Controllers
 
         // GET: api/<LibrosController>/5
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<LibroDTO>> Get(int id)
+        //public async Task<ActionResult<LibroDTO>> Get(int id)// sin herencia
+        public async Task<ActionResult<LibroDTOconAutores>> Get(int id) // con herencia
         {
             //solo traiamos los datos del libro
             //var libro = await context.Libros.Include(libroDB => libroDB.Comentarios).FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
@@ -41,7 +42,7 @@ namespace WebAPIAutores.Controllers
                .FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
             libro.AutoresLibros = libro.AutoresLibros.OrderBy(x => x.Orden).ToList();
 
-            return mapper.Map<LibroDTO>(libro);
+            return mapper.Map<LibroDTOconAutores>(libro);
 
             //ahora traemos los datos del autor también
             //return await context.Libros.Include(x=>x.Autor).FirstOrDefaultAsync(x => x.Id == id);

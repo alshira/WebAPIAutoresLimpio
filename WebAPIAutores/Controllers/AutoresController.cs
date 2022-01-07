@@ -35,17 +35,22 @@ namespace WebAPIAutores.Controllers
         //usando variables como rutas de acceso
         //usando dos parametros y uno nulo
         [HttpGet("{id:int}")]//api/[controller]/1   //atributo a nivel de método
-        public async Task<ActionResult<AutorDTO>> Get(int id) //attributo a nivel de prametros
+        //public async Task<ActionResult<AutorDTO>> Get(int id) //attributo a nivel de prametros
+        //public async Task<ActionResult<AutorDTO>> Get(int id) //sin herencia
+        public async Task<ActionResult<AutorDTOconLibros>> Get(int id) //con herencia
         {
         
-            var autor = await context.Autores.FirstOrDefaultAsync(autorDB => autorDB.Id == id);
+            var autor = await context.Autores
+                .Include(autorDB => autorDB.AutoresLibros)
+                .ThenInclude(autorLibroDB => autorLibroDB.Libro)
+                .FirstOrDefaultAsync(autorDB => autorDB.Id == id);
             
             if (autor == null)
             {
                 return NotFound();
             } else
             {
-                return mapper.Map<AutorDTO>(autor);
+                return mapper.Map<AutorDTOconLibros>(autor);
             }
             
         }
