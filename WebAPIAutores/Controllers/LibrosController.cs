@@ -70,14 +70,15 @@ namespace WebAPIAutores.Controllers
            
             var libro = mapper.Map<Libro>(libroCreacionDTO);
 
-            if (libro.AutoresLibros != null)
+            /*if (libro.AutoresLibros != null)
             {
                 for (int i = 0; i < libro.AutoresLibros.Count; i++)
                 {
                     libro.AutoresLibros[i].Orden = i;
                 }
 
-            }
+            }*/
+            AsignarOrdenAutores(libro);
 
             context.Add(libro);//marcamos para agregar
             await context.SaveChangesAsync();//guardamos los cambios
@@ -88,7 +89,40 @@ namespace WebAPIAutores.Controllers
 
         }
 
-        
-     
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult> Put(int id,LibroCreacionDTO libroCreacionDTO)
+        {
+            var libroDB = await context.Libros
+                .Include(x => x.AutoresLibros)
+                .FirstOrDefaultAsync(x => x.Id == id);// esto simplemente está trayendo el libro cuyo aid sea igual a id y al mismo tiempo se está trayendo todos los libros relacionados 
+
+            if (libroDB == null)
+            {
+                return NotFound();
+            }
+            libroDB = mapper.Map(libroCreacionDTO, libroDB); //al ahacer la asignación al mismo libroDB hacemos las actualizaciones de los libros asociados fácilmente
+            
+            AsignarOrdenAutores(libroDB);
+
+            await context.SaveChangesAsync();
+            return NoContent();
+
+                 
+        }
+
+        private void AsignarOrdenAutores(Libro libro)
+        {
+
+            if (libro.AutoresLibros != null)
+            {
+                for (int i = 0; i < libro.AutoresLibros.Count; i++)
+                {
+                    libro.AutoresLibros[i].Orden = i;
+                }
+
+            }
+        }
+
     }
 }
