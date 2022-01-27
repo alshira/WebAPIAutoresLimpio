@@ -42,6 +42,12 @@ namespace WebAPIAutores.Controllers
                .Include(libroDB => libroDB.AutoresLibros) //el include del resistro en autores libros
                .ThenInclude(autorLibroDB => autorLibroDB.Autor) // hacemos un include anidado e incluimos el autor
                .FirstOrDefaultAsync(x => x.Id == id);//uso de include así le pedimos que incluya los comentarios, eso genera un join 
+
+            if (libro == null)
+            {
+                return NotFound();
+            }
+
             libro.AutoresLibros = libro.AutoresLibros.OrderBy(x => x.Orden).ToList();
 
             return mapper.Map<LibroDTOconAutores>(libro);
@@ -153,6 +159,19 @@ namespace WebAPIAutores.Controllers
             await context.SaveChangesAsync();
             return NoContent();
 
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var existe = await context.Libros.AnyAsync(autorDB => autorDB.Id == id);
+            if (!existe)
+            {
+                return NotFound();
+            }
+            context.Remove(new Libro() { Id = id });//marcando el registro que va ser borrado
+            await context.SaveChangesAsync();//aquí si borro el libro
+            return NoContent();
         }
 
     }

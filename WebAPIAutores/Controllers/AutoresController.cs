@@ -124,7 +124,8 @@ namespace WebAPIAutores.Controllers
             }
             context.Remove(new Autor() { Id = id });//marcando el registro que va ser borrado
             await context.SaveChangesAsync();//aquí si borro el autor
-            return Ok();
+            //return Ok();
+            return NoContent();//esto tb es válido
         }
     }
 }
