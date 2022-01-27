@@ -14,6 +14,8 @@ namespace WebAPIAutores.Models
         [PrimeraLetraMayuscula]//custom dataanotation
         [StringLength(maximumLength: 250)]
         public string Titulo { get; set; }
+        //? es para hacer la propiedad nullable
+        public DateTime? FechaPublicacion { get; set; }
         //propiedad de navegación
         // nos va permitir traer la lista de comentarios de un libro en espcífico
         public List<Comentario> Comentarios { get; set; }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPIAutores.DTOs;
@@ -122,6 +123,36 @@ namespace WebAPIAutores.Controllers
                 }
 
             }
+        }
+
+
+        [HttpPatch("{id:int}")]
+        public async Task<ActionResult> Patch(int id,JsonPatchDocument<LibroPatchDTO> patchDocument)
+        {
+            if (patchDocument == null)
+            {
+                return BadRequest();//error con el formato que nos enviaron
+            }
+
+            var libroDB = await context.Libros.FirstOrDefaultAsync(X => X.Id == id);
+            if (libroDB == null)
+            {
+                return NotFound();
+            }
+
+            var libroDTO = mapper.Map<LibroPatchDTO>(libroDB); //cargamos los datos que tiene la base de datos
+            patchDocument.ApplyTo(libroDTO,ModelState); //aplicamos los cambios que traiga el patchDocument
+
+            var esValido = TryValidateModel(libroDTO); //le aplicamos las validaciones del modelo LibroDTO
+            if (!esValido)
+            {
+                return BadRequest(ModelState);//devolvemos el error de la validación que no se cumplió
+            }
+
+            mapper.Map(libroDTO, libroDB);
+            await context.SaveChangesAsync();
+            return NoContent();
+
         }
 
     }

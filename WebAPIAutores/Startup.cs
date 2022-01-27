@@ -31,7 +31,8 @@ namespace WebAPIAutores
                 opciones.Filters.Add(typeof(FiltroDeExcepcion)); // esta es la aplicación de un filtro GOLBAL!
             }).AddJsonOptions(x =>
            x.JsonSerializerOptions.ReferenceHandler =
-           System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles); // está línea te ayuda a ignorar las inclusiones ciclicas de los modelos
+           //System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles); // está línea te ayuda a ignorar las inclusiones ciclicas de los modelos
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles).AddNewtonsoftJson(); // Configuramos el NewtonsoftJson
 
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("defaultConnection")));
 

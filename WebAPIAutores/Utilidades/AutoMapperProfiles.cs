@@ -16,6 +16,7 @@ namespace WebAPIAutores.Utilidades
             CreateMap<LibroCreacionDTO, Libro>().ForMember(libro => libro.AutoresLibros, opciones => opciones.MapFrom(MapAutoresLibros));//MapAutoresLibros es un metodo creado por nosotros
             CreateMap<Libro, LibroDTO>();
             CreateMap<Libro, LibroDTOconAutores>().ForMember(libroDTO => libroDTO.Autores, opciones => opciones.MapFrom(MapLibroDTOAutores)); //asignamos la funcion personalizada para hacer el mapeo
+            CreateMap<LibroPatchDTO, Libro>().ReverseMap();// reverse map es para que se configure el mapeo desde Libro a LibroPatchDTO y no lo tengamos que configurar
             CreateMap<ComentarioCreacionDTO,Comentario>();
             CreateMap<Comentario, ComentarioDTO>();
             
