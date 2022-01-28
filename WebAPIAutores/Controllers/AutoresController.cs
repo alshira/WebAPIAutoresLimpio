@@ -16,12 +16,14 @@ namespace WebAPIAutores.Controllers
     {
         private readonly ApplicationDbContext context;
         private readonly IMapper mapper;
+        private readonly IConfiguration configuration;
 
-        public AutoresController(ApplicationDbContext context, IMapper mapper)
+        public AutoresController(ApplicationDbContext context, IMapper mapper, IConfiguration configuration) //inyectamos la dependencia de IConfiguration
+        //public AutoresController(ApplicationDbContext context, IMapper mapper) //inyectamos la dependencia de DBcOntext e IMapper
         {
             this.context = context;
             this.mapper = mapper;
-         
+            this.configuration = configuration;
         }
         [HttpGet]
        
@@ -64,6 +66,14 @@ namespace WebAPIAutores.Controllers
             var autores = await context.Autores.Where(autorDB => autorDB.Nombre.Contains(nombre)).ToListAsync();
             
             return mapper.Map<List<AutorDTO>>(autores);
+        }
+
+        [HttpGet("Configuraciones")] //estee s un endpoint
+        public ActionResult<String> ObtenerConfiguracion()
+        {
+            //return configuration["developer"];
+            //return configuration.GetConnectionString("defaultConnection");//funcion especializada
+            return configuration["connectionStrings:defaultConnection"];//funcion generica "entrando" en los valores JSON
         }
        
         [HttpPost]//attributo a nivel del metodo
