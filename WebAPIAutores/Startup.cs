@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebAPIAutores.Filtros;
 using WebAPIAutores.Middlewares;
@@ -53,6 +54,11 @@ namespace WebAPIAutores
 
             //configurarmos Automaper.Extensions.Microsoft.DependencyInjection 
             services.AddAutoMapper(typeof(Startup));
+
+            //agregamos soporte para idenitty
+            services.AddIdentity<IdentityUser,IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
         }
 

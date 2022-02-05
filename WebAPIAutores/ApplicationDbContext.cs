@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using WebAPIAutores.Models;
 
 namespace WebAPIAutores
 {
-    public class ApplicationDbContext : DbContext
+    //public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext //ahora usamos el identity
     {
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
